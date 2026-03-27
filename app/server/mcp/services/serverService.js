@@ -1,8 +1,37 @@
+const http = require('http');
 const { startServer, stopServer } = require('../../index.js');
 
 let expressServer = null;
 
+const isPortInUse = (port) => {
+  return new Promise((resolve) => {
+    const req = http.get(`http://localhost:${port}/api/health`, (res) => {
+      // If we get a response, server is running
+      resolve(true);
+    });
+    
+    req.on('error', () => {
+      // Connection refused means server is not running
+      resolve(false);
+    });
+    
+    req.setTimeout(2000, () => {
+      req.destroy();
+      resolve(false);
+    });
+  });
+};
+
 const startExpressServer = async (workspacePath, port) => {
+  // Check if server is already running
+  const alreadyRunning = await isPortInUse(port);
+  
+  if (alreadyRunning) {
+    console.error(`[MCP] Server already running on port ${port}, skipping startup`);
+    console.error(`[MCP] Web UI available at http://localhost:${port}`);
+    return null;
+  }
+  
   console.error('[MCP] Starting Express server...');
   const { server: httpServer } = await startServer(workspacePath, port);
   expressServer = httpServer;

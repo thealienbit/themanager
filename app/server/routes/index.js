@@ -4,6 +4,11 @@ const router = express.Router();
 const workspaceRoutes = require('./workspaceRoutes');
 const itemRoutes = require('./itemRoutes');
 
+// Health check endpoint
+router.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // Workspace routes
 router.use('/workspace', workspaceRoutes);
 
