@@ -96,20 +96,87 @@ Move items between statuses:
 - **inprogress** — Being worked on
 - **finished** — Completed
 
-### 4. Agentic Access (Coming Soon)
-Configure your AI coding assistant to access TheManager via MCP:
+### 4. Agentic Access via MCP
+Configure your AI coding assistant to access TheManager via MCP. When the MCP server starts, it also serves the web UI at **http://localhost:9898** for convenient access.
+
+**Note:** When the MCP server is running via an AI assistant, you can access the web UI at the same time.
+
+#### Claude Desktop
+Add to `~/.claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
     "themanager": {
       "command": "node",
-      "args": ["/path/to/themanager/app/server/mcp.js"],
+      "args": ["/absolute/path/to/themanager/app/server/mcp.mjs"],
       "env": {
-        "WORKSPACE_PATH": "~/Dev/your-project"
+        "WORKSPACE_PATH": "/absolute/path/to/your/project"
       }
     }
   }
 }
+```
+
+#### Cursor
+Add to Cursor settings (`settings.json`):
+```json
+{
+  "mcpServers": {
+    "themanager": {
+      "command": "node",
+      "args": ["/absolute/path/to/themanager/app/server/mcp.mjs"],
+      "env": {
+        "WORKSPACE_PATH": "/absolute/path/to/your/project"
+      }
+    }
+  }
+}
+```
+
+#### OpenCode
+Add to your `opencode.jsonc`:
+```jsonc
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "themanager": {
+      "type": "local",
+      "command": ["node", "/absolute/path/to/themanager/app/server/mcp.mjs"],
+      "environment": {
+        "WORKSPACE_PATH": "/absolute/path/to/your/project"
+      },
+      "enabled": true
+    }
+  }
+}
+```
+
+Or add directly via CLI:
+```bash
+opencode mcp add themanager -- node /absolute/path/to/themanager/app/server/mcp.mjs
+```
+
+#### Available MCP Tools
+| Tool | Description |
+|------|-------------|
+| `list_items` | List all feats or bugs, optionally filtered by status |
+| `get_item` | Get a single item with full content |
+| `create_item` | Create a new feat or bug |
+| `update_item` | Update title or body content |
+| `move_item` | Move item to new status (new/inprogress/finished) |
+| `delete_item` | Delete an item |
+| `search_items` | Search by title or content |
+
+#### Example Agent Conversations
+```
+Agent: "What features are in progress?"
+Tool: list_items({ type: "feats", status: "inprogress" })
+
+Agent: "File a bug for the login timeout"
+Tool: create_item({ type: "bugs", title: "Login timeout after 5 minutes" })
+
+Agent: "Mark auth feature as finished"
+Tool: move_item({ type: "feats", id: "feat-abc123", status: "finished" })
 ```
 
 ## Feature File Structure
