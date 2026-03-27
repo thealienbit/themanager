@@ -62,9 +62,9 @@ class ItemController {
   async createItem(req, res) {
     try {
       const { type } = req.params;
-      const { title, body } = req.body;
-      
-      const item = await itemService.createItem(type, { title, body });
+      const { title, body, priority, labels } = req.body;
+
+      const item = await itemService.createItem(type, { title, body, priority, labels });
       res.json(item);
     } catch (error) {
       console.error('[ERROR] Create item:', error);
@@ -87,9 +87,9 @@ class ItemController {
   async updateItem(req, res) {
     try {
       const { type, id } = req.params;
-      const { title, body } = req.body;
-      
-      const item = await itemService.updateItem(type, id, { title, body });
+      const { title, body, priority, labels } = req.body;
+
+      const item = await itemService.updateItem(type, id, { title, body, priority, labels });
       res.json(item);
     } catch (error) {
       console.error('[ERROR] Update item:', error);

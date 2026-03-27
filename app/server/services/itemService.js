@@ -1,15 +1,16 @@
 const fs = require('fs-extra');
 const matter = require('gray-matter');
 const path = require('path');
-const { WORKSPACE_TYPES, STATUSES } = require('../config/constants');
+const { WORKSPACE_TYPES, STATUSES, PRIORITIES, DEFAULT_PRIORITY } = require('../config/constants');
 const { getCurrentWorkspace } = require('../config/state');
-const { 
-  getItemPath, 
-  findItemLocation, 
-  generateId, 
+const {
+  getItemPath,
+  findItemLocation,
+  generateId,
   getCurrentDate,
-  ensureWorkspaceFolders 
+  ensureWorkspaceFolders
 } = require('../utils/fileUtils');
+const { createTimelineEntry } = require('../utils/timelineUtils');
 
 class ItemService {
   /**
@@ -61,7 +62,14 @@ class ItemService {
           const content = await fs.readFile(filePath, 'utf-8');
           const { data } = matter(content);
           const id = file.replace('.md', '');
-          allItems.push({ id, ...data, _status: status });
+          allItems.push({
+            id,
+            ...data,
+            priority: data.priority || DEFAULT_PRIORITY,
+            labels: data.labels || [],
+            timelineCount: (data.timeline || []).length,
+            _status: status
+          });
         }
       }
     }
@@ -88,14 +96,25 @@ class ItemService {
     const content = await fs.readFile(filePath, 'utf-8');
     const { data, content: body } = matter(content);
 
-    return { id, ...data, _status: currentStatus, body };
+    return {
+      id,
+      ...data,
+      priority: data.priority || DEFAULT_PRIORITY,
+      labels: data.labels || [],
+      timeline: data.timeline || [],
+      _status: currentStatus,
+      body
+    };
   }
 
   /**
    * Create a new item
    */
-  async createItem(type, { title, body = '' }) {
+  async createItem(type, { title, body = '', priority, labels }) {
     this.validateType(type);
+    if (priority && !PRIORITIES.includes(priority)) {
+      throw new Error('Invalid priority. Must be critical, high, medium, or low');
+    }
     const workspacePath = this.validateWorkspace();
 
     const id = generateId(type);
@@ -106,8 +125,11 @@ class ItemService {
       id,
       title: title || 'Untitled',
       status,
+      priority: priority || DEFAULT_PRIORITY,
+      labels: Array.isArray(labels) ? labels : [],
       created: now,
-      updated: now
+      updated: now,
+      timeline: [createTimelineEntry('created', 'Item created')]
     };
 
     const fileContent = matter.stringify(body, frontmatter);
@@ -121,8 +143,11 @@ class ItemService {
   /**
    * Update an existing item
    */
-  async updateItem(type, id, { title, body }) {
+  async updateItem(type, id, { title, body, priority, labels }) {
     this.validateType(type);
+    if (priority && !PRIORITIES.includes(priority)) {
+      throw new Error('Invalid priority. Must be critical, high, medium, or low');
+    }
     const workspacePath = this.validateWorkspace();
 
     const currentStatus = await findItemLocation(workspacePath, type, id);
@@ -135,16 +160,31 @@ class ItemService {
     const { data } = matter(content);
     const now = getCurrentDate();
 
+    const timeline = data.timeline || [];
+
+    if (title !== undefined && title !== data.title) {
+      timeline.push(createTimelineEntry('title_changed', `Title changed from "${data.title}" to "${title}"`));
+    }
+    if (priority !== undefined && priority !== (data.priority || DEFAULT_PRIORITY)) {
+      timeline.push(createTimelineEntry('priority_changed', `Priority changed from ${data.priority || DEFAULT_PRIORITY} to ${priority}`));
+    }
+    if (labels !== undefined && JSON.stringify(labels) !== JSON.stringify(data.labels || [])) {
+      timeline.push(createTimelineEntry('labels_changed', `Labels updated`));
+    }
+
     const frontmatter = {
       ...data,
       title: title !== undefined ? title : data.title,
-      updated: now
+      priority: priority !== undefined ? priority : (data.priority || DEFAULT_PRIORITY),
+      labels: labels !== undefined ? labels : (data.labels || []),
+      updated: now,
+      timeline
     };
 
-    const newBody = body !== undefined 
-      ? body 
+    const newBody = body !== undefined
+      ? body
       : content.split('---')[2]?.trim() || '';
-    
+
     const fileContent = matter.stringify(newBody, frontmatter);
     await fs.writeFile(filePath, fileContent, 'utf-8');
 
@@ -175,10 +215,14 @@ class ItemService {
     const { data } = matter(content);
     const now = getCurrentDate();
 
+    const timeline = data.timeline || [];
+    timeline.push(createTimelineEntry('status_changed', `Status changed from ${currentStatus} to ${targetStatus}`));
+
     const frontmatter = {
       ...data,
       status: targetStatus,
-      updated: now
+      updated: now,
+      timeline
     };
 
     const body = content.split('---')[2]?.trim() || '';

@@ -23,44 +23,47 @@ function WorkspaceSelect() {
     e.preventDefault();
     setError('');
     setLoading(true);
-
     try {
-      const response = await axios.post(`${API_URL}/workspace`, { path });
-      console.log('Workspace set response:', response.data);
+      await axios.post(`${API_URL}/workspace`, { path });
       localStorage.setItem('workspace', path);
       navigate('/dashboard');
     } catch (err) {
-      console.error('Workspace set error:', err);
       const errorMessage = err.response?.data?.error || err.message || 'Failed to set workspace';
-      setError(`${errorMessage} (Server: ${serverStatus})`);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center">
-      <div className="w-full max-w-md">
-        <h1 className="text-center mb-2">TheManager</h1>
-        <p className="text-center text-[var(--text)] mb-8">
-          Select a project directory to manage its features and bugs
-        </p>
+    <div className="min-h-screen flex items-center justify-center bg-[var(--bg)]">
+      <div className="w-full max-w-sm">
+        <div className="text-center mb-6">
+          <div className="w-10 h-10 rounded-lg bg-[var(--accent)] flex items-center justify-center mx-auto mb-3">
+            <span className="text-white font-bold text-[16px]">M</span>
+          </div>
+          <h1 className="text-[18px] font-semibold text-[var(--text-h)]">TheManager</h1>
+          <p className="text-[12px] text-[var(--text-muted)] mt-1">Local-first project management for agentic coders</p>
+        </div>
 
-        <div className="my-4 text-center">
-          <span className={`inline-block px-2 py-1 text-xs rounded ${
-            serverStatus === 'online' 
-              ? 'bg-green-100 text-green-700' 
+        <div className="flex justify-center mb-4">
+          <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 text-[11px] rounded-full ${
+            serverStatus === 'online'
+              ? 'bg-green-500/15 text-green-400'
               : serverStatus === 'offline'
-              ? 'bg-red-100 text-red-700'
-              : 'bg-yellow-100 text-yellow-700'
+              ? 'bg-red-500/15 text-red-400'
+              : 'bg-yellow-500/15 text-yellow-400'
           }`}>
-            Server: {serverStatus}
+            <span className={`w-1.5 h-1.5 rounded-full ${
+              serverStatus === 'online' ? 'bg-green-400' : serverStatus === 'offline' ? 'bg-red-400' : 'bg-yellow-400'
+            }`} />
+            Server {serverStatus}
           </span>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <div>
-            <label htmlFor="path" className="block text-sm font-medium mb-1">
+            <label htmlFor="path" className="block text-[12px] font-medium text-[var(--text-muted)] mb-1">
               Project Path
             </label>
             <input
@@ -68,24 +71,27 @@ function WorkspaceSelect() {
               id="path"
               value={path}
               onChange={(e) => setPath(e.target.value)}
-              placeholder="~/Dev/slate"
-              className="w-full px-3 py-2 border border-[var(--border)] rounded bg-[var(--bg)] text-[var(--text-h)] focus:outline-none focus:border-[var(--accent)]"
+              placeholder="/Users/you/projects/my-app"
+              className="w-full px-3 py-2 text-[13px] bg-[var(--bg-surface)] border border-[var(--border)] rounded-md text-[var(--text-h)] focus:outline-none focus:border-[var(--accent-border)] placeholder:text-[var(--text-muted)] font-mono"
               required
+              autoFocus
             />
           </div>
 
-          {error && (
-            <p className="text-red-500 text-sm">{error}</p>
-          )}
+          {error && <p className="text-red-400 text-[12px]">{error}</p>}
 
           <button
             type="submit"
             disabled={loading || serverStatus !== 'online'}
-            className="w-full py-2 px-4 bg-[var(--accent)] text-white rounded font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="w-full py-2 px-4 bg-[var(--accent)] text-white rounded-md text-[13px] font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
           >
-            {loading ? 'Setting Workspace...' : 'Open Project'}
+            {loading ? 'Opening...' : 'Open Project'}
           </button>
         </form>
+
+        <p className="text-center text-[11px] text-[var(--text-muted)] mt-4">
+          Your data stays local. No cloud. No account.
+        </p>
       </div>
     </div>
   );
