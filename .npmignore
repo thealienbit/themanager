@@ -1,0 +1,44 @@
+# Source files to exclude
+app/client/src/
+app/client/index.html
+*.config.js
+*.config.*
+vite.config.js
+
+# Development files
+.git/
+.gitignore
+.eslintrc*
+.prettier*
+*.md
+!README.md
+
+# Build output (keep dist/)
+# app/client/dist/ - INCLUDED in package
+
+# npm related
+node_modules/
+package-lock.json
+npm-debug.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test files
+**/*.test.js
+**/*.test.ts
+**/*.spec.js
+**/*.spec.ts
+__tests__/
+
+# Misc
+.env
+.env.*
+*.log

@@ -49,7 +49,17 @@ your-project/
 - Node.js 18+
 - npm 9+
 
-### Installation
+### Option 1: Install via npm (Recommended)
+
+```bash
+# Install globally
+npm install -g @themanager/mcp
+
+# Verify installation
+themanager --help
+```
+
+### Option 2: Clone from GitHub
 
 ```bash
 # Clone the repository
@@ -57,7 +67,10 @@ git clone https://github.com/yourusername/themanager.git
 cd themanager
 
 # Install dependencies
-npm run install:all
+npm install -g
+
+# Link for development
+npm link
 ```
 
 ### Development
@@ -97,10 +110,9 @@ Move items between statuses:
 - **finished** — Completed
 
 ### 4. Agentic Access via MCP
-Configure your AI coding assistant to access TheManager via MCP. When the MCP server starts, it also serves the web UI at **http://localhost:9898** for convenient access.
+Configure your AI coding assistant to access TheManager via MCP. When the MCP server starts, it also serves the web UI at **http://localhost:3001** for convenient access.
 
 **Note:** When the MCP server is running via an AI assistant, you can access the web UI at the same time.
-```
 
 #### OpenCode
 Add to your `opencode.jsonc`:
@@ -110,10 +122,7 @@ Add to your `opencode.jsonc`:
   "mcp": {
     "themanager": {
       "type": "local",
-      "command": ["node", "/absolute/path/to/themanager/app/server/mcp.mjs"],
-      "environment": {
-        "WORKSPACE_PATH": "/absolute/path/to/your/project"
-      },
+      "command": ["themanager", "/path/to/your/project"],
       "enabled": true
     }
   }
@@ -122,11 +131,35 @@ Add to your `opencode.jsonc`:
 
 Or add directly via CLI:
 ```bash
-opencode mcp add themanager -- node /absolute/path/to/themanager/app/server/mcp.mjs
+opencode mcp add themanager -- themanager /path/to/your/project
+```
 
+**Note:** Add the mcp configuration at project level for better user experience. Add feats/ and bugs/ directories into .gitignore.
 
-Note : Add the mcp configuration at project level for better user experience
-Add feats/ and bugs/ directory into .gitignore
+#### Claude Desktop
+Add to `~/.claude_desktop_config.json`:
+```json
+{
+  "mcpServers": {
+    "themanager": {
+      "command": "themanager",
+      "args": ["/path/to/your/project"]
+    }
+  }
+}
+```
+
+#### Cursor
+Add to Cursor settings (`settings.json`):
+```json
+{
+  "mcpServers": {
+    "themanager": {
+      "command": "themanager",
+      "args": ["/path/to/your/project"]
+    }
+  }
+}
 ```
 
 #### Available MCP Tools
