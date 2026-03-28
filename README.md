@@ -53,10 +53,10 @@ your-project/
 
 ```bash
 # Install globally
-npm install -g @themanager/mcp
+npm install -g @agentira/mcp
 
 # Verify installation
-themanager --help
+agentira --help
 ```
 
 ### Option 2: Clone from GitHub
@@ -120,9 +120,9 @@ Add to your `opencode.jsonc`:
 {
   "$schema": "https://opencode.ai/config.json",
   "mcp": {
-    "themanager": {
+    "agentira": {
       "type": "local",
-      "command": ["themanager", "/path/to/your/project"],
+      "command": ["agentira", "/path/to/your/project"],
       "enabled": true
     }
   }
@@ -131,7 +131,7 @@ Add to your `opencode.jsonc`:
 
 Or add directly via CLI:
 ```bash
-opencode mcp add themanager -- themanager /path/to/your/project
+opencode mcp add agentira -- agentira /path/to/your/project
 ```
 
 **Note:** Add the mcp configuration at project level for better user experience. Add feats/ and bugs/ directories into .gitignore.
@@ -141,8 +141,8 @@ Add to `~/.claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "themanager": {
-      "command": "themanager",
+    "agentira": {
+      "command": "agentira",
       "args": ["/path/to/your/project"]
     }
   }
@@ -154,8 +154,8 @@ Add to Cursor settings (`settings.json`):
 ```json
 {
   "mcpServers": {
-    "themanager": {
-      "command": "themanager",
+    "agentira": {
+      "command": "agentira",
       "args": ["/path/to/your/project"]
     }
   }

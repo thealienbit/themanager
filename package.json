@@ -1,11 +1,11 @@
 {
-  "name": "@themanager/mcp",
-  "version": "1.0.0",
+  "name": "@agentira/mcp",
+  "version": "0.0.1",
   "description": "MCP server for managing Features and Bugs as markdown files - built for agentic coders",
   "type": "module",
   "main": "app/server/mcp.js",
   "bin": {
-    "themanager": "./bin/themanager.cjs"
+    "agentira": "./bin/agentira.cjs"
   },
   "scripts": {
     "postinstall": "npm install --ignore-scripts",

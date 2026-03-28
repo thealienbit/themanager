@@ -12,12 +12,12 @@ if (!workspacePath) {
   console.error('Error: WORKSPACE_PATH environment variable or CLI argument required');
   console.error('');
   console.error('Usage:');
-  console.error('  themanager /path/to/project');
-  console.error('  WORKSPACE_PATH=/path/to/project themanager');
+  console.error('  agentira /path/to/project');
+  console.error('  WORKSPACE_PATH=/path/to/project agentira');
   console.error('');
   console.error('Examples:');
-  console.error('  themanager ~/Projects/myapp');
-  console.error('  themanager /Users/me/Dev/workspace');
+  console.error('  agentira ~/Projects/myapp');
+  console.error('  agentira /Users/me/Dev/workspace');
   process.exit(1);
 }
 
