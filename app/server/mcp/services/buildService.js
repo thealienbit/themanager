@@ -6,18 +6,22 @@ const buildClient = async () => {
   const clientPath = path.join(__dirname, '..', '..', '..', 'client');
   const distPath = path.join(clientPath, 'dist');
   
-  // Check if dist folder exists and is recent
+  // Check if dist folder exists
   if (fs.existsSync(distPath)) {
-    const distStats = fs.statSync(distPath);
     const srcPath = path.join(clientPath, 'src');
     
+    // If src doesn't exist (e.g., in production npm install), use existing dist
+    if (!fs.existsSync(srcPath)) {
+      console.error('[MCP] Using existing React build');
+      return;
+    }
+    
     // Check if src is newer than dist
-    if (fs.existsSync(srcPath)) {
-      const srcStats = fs.statSync(srcPath);
-      if (distStats.mtime > srcStats.mtime) {
-        console.error('[MCP] Using existing React build');
-        return;
-      }
+    const distStats = fs.statSync(distPath);
+    const srcStats = fs.statSync(srcPath);
+    if (distStats.mtime > srcStats.mtime) {
+      console.error('[MCP] Using existing React build');
+      return;
     }
   }
   

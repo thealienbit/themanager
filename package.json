@@ -1,6 +1,6 @@
 {
   "name": "@agentira/mcp",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "MCP server for managing Features and Bugs as markdown files - built for agentic coders",
   "type": "module",
   "main": "app/server/mcp.js",
@@ -8,7 +8,6 @@
     "agentira": "./bin/agentira.cjs"
   },
   "scripts": {
-    "postinstall": "npm install --ignore-scripts",
     "build": "cd app/client && npm run build",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "node app/server/index.js",
