@@ -100,37 +100,6 @@ Move items between statuses:
 Configure your AI coding assistant to access TheManager via MCP. When the MCP server starts, it also serves the web UI at **http://localhost:9898** for convenient access.
 
 **Note:** When the MCP server is running via an AI assistant, you can access the web UI at the same time.
-
-#### Claude Desktop
-Add to `~/.claude_desktop_config.json`:
-```json
-{
-  "mcpServers": {
-    "themanager": {
-      "command": "node",
-      "args": ["/absolute/path/to/themanager/app/server/mcp.mjs"],
-      "env": {
-        "WORKSPACE_PATH": "/absolute/path/to/your/project"
-      }
-    }
-  }
-}
-```
-
-#### Cursor
-Add to Cursor settings (`settings.json`):
-```json
-{
-  "mcpServers": {
-    "themanager": {
-      "command": "node",
-      "args": ["/absolute/path/to/themanager/app/server/mcp.mjs"],
-      "env": {
-        "WORKSPACE_PATH": "/absolute/path/to/your/project"
-      }
-    }
-  }
-}
 ```
 
 #### OpenCode
@@ -154,6 +123,10 @@ Add to your `opencode.jsonc`:
 Or add directly via CLI:
 ```bash
 opencode mcp add themanager -- node /absolute/path/to/themanager/app/server/mcp.mjs
+
+
+Note : Add the mcp configuration at project level for better user experience
+Add feats/ and bugs/ directory into .gitignore
 ```
 
 #### Available MCP Tools
